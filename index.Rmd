@@ -1,0 +1,83 @@
+---
+title       : "Beef Herd By Country for 2016" 
+subtitle    : "3rd September 2018"
+author      : "Mark Smith"
+job         : 
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Please use your mouse to interact with the Plotly 3D Scatter plot on the next page.
+
+* Data is courtesy of <http://www.agriculture.gov.au/abares/research-topics/agricultural-commodities/agricultural-commodities-trade-data#agricultural-commodities>
+
+* The exact file was <http://data.daff.gov.au/data/warehouse/agcstd9abcc002/agcstd9abcc0022017_IugZg/ACS2017_Meat-BeefTables_v1.0.0.xlsx>
+
+* The data is loaded directly from the XLSX file but cleansing is required to make it usable.  Details are available in the Rmd code at <https://github.com/MarkSmithAU/DevelopingDataProductsPlotlyAssignment>
+
+* Please use the Left/Right arrow or PageDown/PageUp keys to navigate the slides.
+* Please use your mouse to interact with the 3D plot from Plotly.
+
+------
+
+# The plot is on the next page:
+* If you are using Chrome the plot should render with no problems.
+* If you are using Firefox you may need to refresh the page while on the slide for it to load.
+* Please go to the plot directly if problems persist: <a href="plot.html">plot.html</a>
+
+------
+
+```{r plot, echo=FALSE, error=FALSE, warning=FALSE, results='asis'}
+loadNoisyPackages <- function() {
+library(plotly)
+library(data.table)
+library(dplyr)
+library(readxl)
+library(stringr)
+library(tidyr)        
+library(htmlwidgets)
+}
+
+suppressPackageStartupMessages(loadNoisyPackages())
+
+# Load the data in and strip it down to the 2016 data from Table13.6 - beef herd numbers
+df <- read_excel("ACS2017_Meat-BeefTables_v1.0.0.xlsx", sheet="Table13.6", skip=7)
+beefData <- df[2:15,]
+names(beefData) <- c("country", "2010", "2011", "2012", "2013", "2014", "2015", "2016")
+
+fixCountryName <-  function(x){
+        x %>% 
+                str_replace('Australia b', 'Australia') %>% 
+                str_replace('China c', 'China') %>% 
+                str_replace('European Union d', 'European Union') %>% 
+                str_replace('India e', 'India') %>% 
+                str_replace('Korea, Rep. of', 'South Korea') %>% 
+                str_replace('Russian Federation', 'Russia') %>% 
+                str_replace('United States', 'United States of America')
+}
+
+# Fix the country names
+beefData <- mutate_all(beefData, funs(fixCountryName))
+# Convert the totals to a number
+beefData[,-1] <- mutate_all(beefData[,-1], as.numeric)
+
+# go from wide to logn format for plotting
+plotData <- beefData %>% gather(year, headCount, 2:ncol(beefData))
+
+# plotly plot
+p <- plot_ly(plotData, x = ~year, y = ~country, z = ~headCount, type = 'scatter3d', mode = 'lines', color = ~country)
+saveWidget(as.widget(p), file = "plot.html")
+```
+Beef Headcount (millions) vs Year vs Country <a href="plot.html">plot.html</a>
+<iframe src="plot.html" style="position:absolute;height:90%;width:100%"></iframe>
+
+------
+Thanks! :)
+
