@@ -1,5 +1,5 @@
 ---
-title       : "Beef Herd By Country for 2016" 
+title       : "Beef Herd By Country and Year" 
 subtitle    : "3rd September 2018"
 author      : "Mark Smith"
 job         : 
@@ -14,7 +14,9 @@ knit        : slidify::knit2slides
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-Please use your mouse to interact with the Plotly 3D Scatter plot on the next page.
+* Please use your mouse to interact with the Plotly 3D Scatter plot on the next page.
+
+* Please use the Left/Right arrow or PageDown/PageUp keys to navigate the slides.
 
 * Data is courtesy of <http://www.agriculture.gov.au/abares/research-topics/agricultural-commodities/agricultural-commodities-trade-data#agricultural-commodities>
 
@@ -22,14 +24,12 @@ Please use your mouse to interact with the Plotly 3D Scatter plot on the next pa
 
 * The data is loaded directly from the XLSX file but cleansing is required to make it usable.  Details are available in the Rmd code at <https://github.com/MarkSmithAU/DevelopingDataProductsPlotlyAssignment>
 
-* Please use the Left/Right arrow or PageDown/PageUp keys to navigate the slides.
-* Please use your mouse to interact with the 3D plot from Plotly.
 
 ------
 
 # The plot is on the next page:
 * If you are using Chrome the plot should render with no problems.
-* If you are using Firefox you may need to refresh the page while on the slide for it to load.
+* If you are using Firefox you may need to refresh the page (F5) while on the slide for it to load.
 * Please go to the plot directly if problems persist: <a href="plot.html">plot.html</a>
 
 ------
@@ -75,8 +75,8 @@ plotData <- beefData %>% gather(year, headCount, 2:ncol(beefData))
 p <- plot_ly(plotData, x = ~year, y = ~country, z = ~headCount, type = 'scatter3d', mode = 'lines', color = ~country)
 saveWidget(as.widget(p), file = "plot.html")
 ```
-Beef Headcount (millions) vs Year vs Country <a href="plot.html">plot.html</a>
-<iframe src="plot.html" style="position:absolute;height:90%;width:100%"></iframe>
+Beef Headcount (millions) vs Year vs Country (Full window view: <a href="plot.html">plot.html</a>)
+<iframe src="plot.html" style="position:absolute;height:100%;width:100%"></iframe>
 
 ------
 Thanks! :)
